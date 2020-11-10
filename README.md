@@ -11,7 +11,8 @@ export SPOTIFY_USER_ID="XXX"
 
 
 You can get client id and client secret from the spotify developer page
-spotify user id is your current user id or nickname
+
+Spotify user id is your current user id or nickname
 
 ## USAGE
 ```bash
