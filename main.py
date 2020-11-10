@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 
+import os
+import sys
+import time
 import spotipy
+import requests
 from spotipy.oauth2 import SpotifyClientCredentials, SpotifyOAuth
 from youtube_search import YoutubeSearch
-import requests
-import time
-import os
 
 spotify_client_id = os.getenv("SPOTIFY_CLIENT_ID")
 spotify_client_secret = os.getenv("SPOTIFY_CLIENT_SECRET")
@@ -14,6 +15,7 @@ spotify_user_id = os.getenv("SPOTIFY_USER_ID", "username")
 youtube_to_mp3_token = "eyJpdiI6IktsSE1RQ0FUSEpMOTBpMXdPaXdnWEE9PSIsInZhbHVlIjoiUVJkTjZFSkNTY0ppa0x5MU9pWjZrZz09IiwibWFjIjoiYjg3YTQ4OGJmMDUyOWY5MWU2ZWE2MmY2YmQzMWJhMTkwY2I1ZWZkNmQ0NGI5Y2ZiMTVlMTAxZTAwNWIzZmNlMCJ9"
 
 sp = None
+
 
 def authenticate():
     global sp
@@ -33,6 +35,9 @@ def get_playlist_tracks(playlist):
 
 def ask_youtube(name):
     results = YoutubeSearch(name, max_results=1).to_dict()
+    if len(results) == 0:
+        print("Youtube video not found...")
+        return None
     return (f"https://youtube.com{results[0]['url_suffix']}")
 
 def download_youtube(video_url, fileName):
@@ -74,7 +79,7 @@ def main():
     user_playlists = get_current_user_playlists()
 
     playlists_blacklist = [] # use this arrey if you don't want some playlists
-    
+
     for playlist in user_playlists['items']:
         print("-"*50)
         print(f"Playlist NAME: {playlist['name']}")
@@ -96,8 +101,11 @@ def main():
                 continue
             try:
                 url = ask_youtube(custom_name)
+                if not url:
+                    continue
                 download_youtube(url, file_name)
-            except:
-                print("Couldn't download from youtube :(")
+            except KeyboardInterrupt:
+                print('Quitting')
+                sys.exit(0)
             print("-"*20)
 main()
