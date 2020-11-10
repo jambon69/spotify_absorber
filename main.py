@@ -58,8 +58,7 @@ def download_youtube(video_url, fileName):
         fileUrl = r.json()['data']['fileUrl']
         if fileUrl:
             break
-        else:
-            print("Waiting for youtube to mp3...")
+        print("Waiting for youtube to mp3...")
         if r.json()['data']['error']:
             print(f"Error: {r.json()['data']['error']}")
             return
